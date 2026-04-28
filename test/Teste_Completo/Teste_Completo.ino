@@ -6,6 +6,8 @@
 
 #include "Arduino.h"
 
+Garra garra;
+
 enum Movimento {
   FRENTE,
   ESQ,
@@ -17,7 +19,7 @@ void setup() {
   motores_init(MOTOR_ESQ_AVANCA, MOTOR_ESQ_RECUA, MOTOR_DIR_AVANCA, MOTOR_DIR_RECUA);
   sensores_init(PINO_ESQ_EXT, PINO_ESQ_INT, PINO_DIR_INT, PINO_DIR_EXT);
   ultra_init(PINO_TRIG, PINO_ECHO);
-  garra_init(PINO_SERVO);
+  garra.begin(PINO_SERVO);
 }
 
 Movimento calcular(bool eExt, bool eInt, bool dInt, bool dExt) {
@@ -28,8 +30,10 @@ Movimento calcular(bool eExt, bool eInt, bool dInt, bool dExt) {
 }
 
 void loop() {
+  garra.update();
+
   bool eExt, eInt, dInt, dExt;
-  lerSensores(eExt, eInt, dInt, dExt); // (bool &eExt, bool &eInt, bool &dInt, bool &dExt)
+  lerSensores(eExt, eInt, dInt, dExt);
 
   Movimento m = calcular(eExt, eInt, dInt, dExt);
 
