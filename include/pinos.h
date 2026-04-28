@@ -1,39 +1,48 @@
 #ifndef PINOS_H
 #define PINOS_H
 
-/*
- * MAPA DE CONFIGURAÇÃO DE PINOS - Robô Seguidor de Linha com Garra
- * 
- * Abreviações:
- *  eExt/eInt = Esquerda Externa/Interna
- *  dExt/dInt = Direita Externa/Interna
- *  Avanca/Recua = Marcha frente/ré
- * 
- */
+// ===== MOTORES (Configuração Original) =====
+#define PININ1 2
+#define PININ2 4
+#define PININ3 5
+#define PININ4 7
+#define PINENA 3    // PWM - Velocidade Motor A
+#define PINENB 6    // PWM - Velocidade Motor B
 
-// ===== SENSORES DE LINHA =====
-#define PINO_ESQ_EXT 2     // Pino digital - Sensor linha ESQUERDA externa
-#define PINO_ESQ_INT 3     // Pino digital - Sensor linha ESQUERDA interna
-#define PINO_DIR_INT 11    // Pino digital - Sensor linha DIREITA interna
-#define PINO_DIR_EXT 12    // Pino digital - Sensor linha DIREITA externa
+// ===== SENSORES DE LINHA QTR (Configuração Original) =====
+#define S1 A0
+#define S2 A1
+#define S3 A2
+#define S4 A3
+#define S5 A4
+#define S6 A5
 
-// ===== SENSOR ULTRASSÔNICO =====
-#define PINO_TRIG 8        // Pino digital - Trigger para enviar pulso
-#define PINO_ECHO 9        // Pino digital - Lê tempo de retorno
+// ===== SENSOR ULTRASSÔNICO (Adaptado) =====
+#define PINO_TRIG 8        
+#define PINO_ECHO 9        
 
-// ===== MOTORES =====
-// Motor Esquerdo
-#define MOTOR_ESQ_AVANCA 4    // Pino digital - Avanço motor esquerdo
-#define MOTOR_ESQ_RECUA 5     // Pino digital - Ré motor esquerdo
+// ===== SERVO / GARRA (Adaptado) =====
+#define PINO_SERVO 10      // Pino PWM para controle da Garra
 
-// Motor Direito
-#define MOTOR_DIR_AVANCA 6    // Pino digital - Avanço motor direito
-#define MOTOR_DIR_RECUA 7     // Pino digital - Ré motor direito
+// ===== LED RGB (Remanejado para evitar conflitos) =====
+#define PINLEDR 11
+#define PINLEDG 12
+#define PINLEDB 13
 
+// =====================================================
+// VALORES DE AJUSTE E LÓGICA (MIF)
+// =====================================================
+#define TRESHOLD 700        
+#define RUNTIME 15500       
 
-// ===== SERVO/GARRA =====
-#define PINO_SERVO 10      // Pino PWM (3,5,6,9,10,11) - Controle servo
+// Perfis de Velocidade (PWM 0-255)
+#define SPEED0 255          // (0 0 1 1 0 0)
+#define SPEED1 220          // (0 0 1 1 1 0)
+#define SPEED2 150          // (0 0 0 1 0 0)
+#define SPEED3 100          // (0 0 0 1 1 0)
+#define SPEED4 80           // (0 0 0 1 1 1)
+#define SPEED5 50           // (0 0 0 0 1 0)
+#define SPEED6 0            // (0 0 0 0 1 1)
+#define SPEED7 200          // (0 0 0 0 0 1)
 
-
-
-#endif 
+#endif
