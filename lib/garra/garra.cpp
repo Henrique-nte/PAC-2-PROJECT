@@ -1,33 +1,81 @@
 #include <Arduino.h>
-#include <Servo.h>
 #include "garra.h"
 
-// Constantes de ângulo - AJUSTE CONFORME TESTES FÍSICOS
-const int ANGULO_GARRA_ABERTA = 0;    // Garra aberta (0°)
-const int ANGULO_GARRA_FECHADA = 90;  // Garra fechada (90°) - ajuste conforme necessário
-
-// Objeto Servo
-Servo servo;
-
-/**
- * Inicializa servo na posição aberta
- * @param pino Pino PWM do servo (3, 5, 6, 9, 10, 11 em Arduino Uno)
- */
-void garra_init(int pino) {
-  servo.attach(pino);
-  servo.write(0);  // Posição inicial segura
+void Garra::begin(int pino) {
+  _pino = pino;
+  _servo.attach(pino);
+  _servo.write(ANGULO_ABERTA);
+  _estado = GARRA_ABERTA;
+  _tempoComando = 0;
 }
 
-/**
- * Abre a garra
- */
-void abrirGarra() {
-  servo.write(ANGULO_GARRA_ABERTA);
+void Garra::fechar() {
+  if (_estado != GARRA_ABERTA) return;
+  _servo.write(ANGULO_FECHADA);
+  _estado = GARRA_FECHANDO;
+  _tempoComando = millis();
 }
 
-/**
- * Fecha a garra
- */
-void fecharGarra() {
-  servo.write(ANGULO_GARRA_FECHADA);
+void Garra::abrir() {
+  if (_estado != GARRA_FECHADA && _estado != GARRA_ROTACIONANDO) return;
+  _servo.write(ANGULO_ABERTA);
+  _estado = GARRA_ABRINDO;
+  _tempoComando = millis();
+}
+
+void Garra::iniciarDeposito() {
+  if (_estado != GARRA_FECHADA) return;
+  _estado = GARRA_ROTACIONANDO;
+}
+
+void Garra::finalizarDeposito() {
+  if (_estado != GARRA_ROTACIONANDO) return;
+  abrir();
+}
+
+void Garra::update() {
+  unsigned long decorrido = millis() - _tempoComando;
+
+  if (_estado == GARRA_FECHANDO) {
+    if (decorrido >= TIMEOUT_SERVO) {
+      // Watchdog: servo travado ou com falha - força estado seguro
+      _resetarServoPorFalha();
+    } else if (decorrido >= TEMPO_MOVIMENTO) {
+      // Movimento concluído normalmente
+      _estado = GARRA_FECHADA;
+    }
+  }
+  else if (_estado == GARRA_ABRINDO) {
+    if (decorrido >= TIMEOUT_SERVO) {
+      _resetarServoPorFalha();
+    } else if (decorrido >= TEMPO_MOVIMENTO) {
+      _estado = GARRA_ABERTA;
+    }
+  }
+}
+
+EstadoGarra Garra::getEstado() const {
+  return _estado;
+}
+
+bool Garra::estaAberta() const {
+  return _estado == GARRA_ABERTA;
+}
+
+bool Garra::estaFechada() const {
+  return _estado == GARRA_FECHADA;
+}
+
+bool Garra::estaRotacionando() const {
+  return _estado == GARRA_ROTACIONANDO;
+}
+
+// --- Privado ---
+
+void Garra::_resetarServoPorFalha() {
+  // Libera e reanexa o servo para destravar sinal PWM preso
+  _servo.detach();
+  _servo.attach(_pino);
+  _servo.write(ANGULO_ABERTA);
+  _estado = GARRA_ABERTA;
 }
