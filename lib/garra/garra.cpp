@@ -3,8 +3,8 @@
 #include "garra.h"
 
 // Constantes de ângulo - AJUSTE CONFORME TESTES FÍSICOS
-const int ANGULO_GARRA_ABERTA = 0;    // Garra aberta (0°)
-const int ANGULO_GARRA_FECHADA = 90;  // Garra fechada (90°) - ajuste conforme necessário
+const int ANGULO_GARRA_ABERTA = 50;    // Garra aberta (0°)
+const int ANGULO_GARRA_FECHADA = 160;  // Garra fechada (90°) - ajuste conforme necessário
 
 // Objeto Servo
 Servo servo;
